@@ -35,12 +35,20 @@ def create_sim():
 
     ego_vehicle = sim.create_single_gen({
         'auto' : False,
-        'vehicle': [1, {"acc": 0.5, "x": 0, "y": 98}]
+        'vehicle': [1, {"acc": 10, "x": 0, "y": 98, "model": "Kinematic", "L": 2.5, "c_a": 2.0, "c_r": 0.01}]
     })
 
     return sim
 
+def func(sim):
+    ego = sim.action_vehicles[0]
+
+    x = ego.get_state()[1][0]
+    
+    if x > 100:
+        return True
+
 sim = create_sim()
 win = Window(sim)
 win.offset = (-150, -110)
-score = win.run(steps_per_update=5)
+win.run(func, steps_per_update=5)

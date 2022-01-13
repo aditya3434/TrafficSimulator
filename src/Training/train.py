@@ -62,7 +62,7 @@ def step(sim, epi, loss, model, steps_per_update):
     state = [x, vel]
     state = np.reshape(state, (1,2))
 
-    choice = 2
+    choice = model.act(state)
     action = choose_action(choice)
     ego.set_state(action)
 

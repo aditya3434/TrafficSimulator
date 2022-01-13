@@ -97,11 +97,17 @@ class Window:
             sim.run(steps_per_update)
 
             if step:
-                new_model, reward, done = step(sim, epi, loss, model, steps_per_update)
+                done = False
+                reward = 0
+                new_model = None
+                if model:
+                    new_model, reward, done = step(sim, epi, loss, model, steps_per_update)
+                else:
+                    done = step(sim)
                 if done:
                     self.running = False
                 return reward, new_model
-            else :
+            else:
                 return 0, None
 
         return self.loop(loop)
