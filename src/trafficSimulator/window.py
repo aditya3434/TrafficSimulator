@@ -49,7 +49,9 @@ class Window:
         # Draw loop
         while self.running:
             # Update simulation
-            if loop: score += loop(self.sim)
+            if loop:
+                reward, model = loop(self.sim)
+                score += reward
 
             # Draw simulation
             self.draw()
@@ -87,20 +89,20 @@ class Window:
                 elif event.type == pygame.MOUSEBUTTONUP:
                     self.mouse_down = False
 
-        return score        
+        return score, model        
 
-    def run(self, func=None, steps_per_update=1):
+    def run(self, step=None, epi = 0, loss = None, model = None, steps_per_update=1):
         """Runs the simulation by updating in every loop."""
         def loop(sim):
             sim.run(steps_per_update)
 
-            if func:
-                reward, done = func(sim)
+            if step:
+                new_model, reward, done = step(sim, epi, loss, model, steps_per_update)
                 if done:
                     self.running = False
-                return reward
+                return reward, new_model
             else :
-                return 0
+                return 0, None
 
         return self.loop(loop)
 
@@ -183,6 +185,7 @@ class Window:
             )
 
         self.polygon(vertices, color, filled=filled)
+        #pygame.draw.rect(self.screen, color, (x, y, l, h))
 
     def rotated_rect(self, pos, size, angle=None, cos=None, sin=None, centered=True, color=(0, 0, 255)):
         self.rotated_box(pos, size, angle=angle, cos=cos, sin=sin, centered=centered, color=color, filled=False)
