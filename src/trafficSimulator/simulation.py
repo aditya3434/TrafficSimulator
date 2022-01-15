@@ -1,3 +1,4 @@
+import math
 from .road import Road
 from copy import deepcopy
 from .vehicle_generator import VehicleGenerator
@@ -46,6 +47,22 @@ class Simulation:
         sig = TrafficSignal(roads, config)
         self.traffic_signals.append(sig)
         return sig
+
+    def ego_collide(self, v1, v2):
+        dist = math.sqrt((v1.x-v2.x)**2+(v1.y-v2.y)**2)
+        if dist < 1:
+            return True
+        return False
+
+    def auto_collide(self, v1):
+        for road in self.roads:
+            for v in road.vehicles:
+                x = road.start[0]+(v.x*road.angle_cos)
+                y = road.start[1]+(v.x*road.angle_sin)
+                dist = math.sqrt((v1.x-x)**2+(v1.y-y)**2)
+                if dist < 1:
+                    return True
+        return False
 
     def update(self):
         # Update every road

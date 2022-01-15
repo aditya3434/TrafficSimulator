@@ -24,8 +24,9 @@ def create_sim():
 
     sim.create_gen({
         'auto' : True,
-        'vehicle_rate': 20,
+        'vehicle_rate': 10,
         'vehicles': [
+            [1, {"path": [4, 3, 5, 9]}],
             [1, {"path": [4, 3, 2]}],
             [1, {"path": [1]}],
             [1, {"path": [6]}],
@@ -38,15 +39,20 @@ def create_sim():
         'vehicle': [1, {"acc": 10, "x": 0, "y": 98, "model": "Kinematic", "L": 2.5, "c_a": 2.0, "c_r": 0.01}]
     })
 
+    ego_vehicle = sim.create_single_gen({
+        'auto' : False,
+        'vehicle': [1, {"acc": 0.5, "x": 300, "y": 102, "model": "Normal", "angle": 180}]
+    })
+
     return sim
 
 def func(sim):
-    ego = sim.action_vehicles[0]
+    ego1 = sim.action_vehicles[0]
+    ego2 = sim.action_vehicles[1]
 
-    x = ego.get_state()[1][0]
-    
-    if x > 100:
+    if sim.ego_collide(ego1, ego2) or sim.auto_collide(ego1):
         return True
+    
 
 sim = create_sim()
 win = Window(sim)
