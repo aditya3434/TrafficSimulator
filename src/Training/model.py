@@ -121,8 +121,8 @@ class DQN:
 			action = random.randrange(self.action_space)
 			return action
 		act_values = self.model.predict(state)
-		# print("act_values: ", act_values)
-		# print("act_values max: ", np.argmax(act_values[0]))
+		print("act_values: ", act_values)
+		print("act_values max: ", np.argmax(act_values[0]))
 		return np.argmax(act_values[0])
 
 	def replay(self,terminal_state,episode,ep_rewards):

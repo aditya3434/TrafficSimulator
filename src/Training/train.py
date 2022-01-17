@@ -43,6 +43,7 @@ def create_sim():
 
     return sim
 
+# Discrete choices for our vehicle
 def choose_action(choice):
     if choice == 0:
         return [0, 0]
@@ -51,34 +52,49 @@ def choose_action(choice):
     else:
         return [0.8, 0]
 
+# Agent step function
 def step(sim, epi, loss, model, steps_per_update):
 
+    # Initializing reward and done state
     reward = 0
     done = False
+
+    # Ego vehicle which we are training
     ego = sim.action_vehicles[0]
 
+    # X-coordinate of ego vehicle
     x = ego.get_state()[1][0]
+
+    # Velocity of ego vehicle
     vel = ego.get_state()[0]
+
+    # Current state
     state = [x, vel]
     state = np.reshape(state, (1,2))
 
+    # Model gives choice
     choice = model.act(state)
     action = choose_action(choice)
     ego.set_state(action)
 
+    # Agent takes choice and updates environment
     sim.run(steps_per_update)
 
+    # Analyzing new state
     x = ego.get_state()[1][0]
     vel = ego.get_state()[0]
     next_state = [x, vel]
     next_state = np.reshape(next_state, (1,2))
 
+    # Calculating step reward
     reward -= (3-0.01*x)
 
+    # Model learning
     model.remember(state, choice, reward, next_state, done)
     model.replay(done, epi, loss)
 
-    if x > 150:
+    # If ego vehicle reaches the end of the road, sim ends
+    if x > 299:
         reward += 1000
         done = True
 
