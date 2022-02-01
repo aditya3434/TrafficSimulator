@@ -100,19 +100,29 @@ def step(sim, epi, loss, model, steps_per_update):
 
     return model, reward, done
 
+# Keeping track of scores
 loss = []
+
+# DQN model for our autonomous vehicle
 straight_model = md.DQN(3,2,'straight_model')
-print("Epsilon : ", straight_model.epsilon)
 x = []
 
+# No. of training episodes
 episodes = 500
 
+# Training Loop
 for i in range(episodes):
+    # Create simulation
     sim = create_sim()
+
+    # Create window to display simulation
     win = Window(sim)
     win.offset = (-150, -110)
+
+    # Get total score an updated model after simulation ends
     score, straight_model = win.run(step, i, loss, straight_model, steps_per_update=4)
-    print("Epsilon : ", straight_model.epsilon)
+    
+    # Append total score to list
     loss.append(score)
     print("Episode : ",i+1, " --> Score : ", score)
     x.append(i+1)

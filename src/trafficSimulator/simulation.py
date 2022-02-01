@@ -22,6 +22,7 @@ class Simulation:
         self.generators = []
         self.action_vehicles = []
         self.traffic_signals = []
+        self.integ = 0
 
     def create_road(self, start, end):
         road = Road(start, end)

@@ -64,6 +64,8 @@ class ActionVehicle:
             # Changing angle according to steer
             self.angle += self.steer*dt*100
 
+            self.angle = self.angle%360
+
             cos = np.cos(np.radians(self.angle))
             sin = np.sin(np.radians(self.angle))
 
