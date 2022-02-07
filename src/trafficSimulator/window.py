@@ -342,9 +342,15 @@ class Window:
     def draw_status(self):
         text_fps = self.text_font.render(f't={self.sim.t:.5}', False, (0, 0, 0))
         text_frc = self.text_font.render(f'n={self.sim.frame_count}', False, (0, 0, 0))
+        x, y = pygame.mouse.get_pos()
+        (x, y) = self.inverse_convert(x, y)
+        text_x = self.text_font.render(f'x={x}', False, (0, 0, 0))
+        text_y = self.text_font.render(f'y={y}', False, (0, 0, 0))
         
         self.screen.blit(text_fps, (0, 0))
         self.screen.blit(text_frc, (100, 0))
+        self.screen.blit(text_x, (200, 0))
+        self.screen.blit(text_y, (300, 0))
 
 
     def draw(self):
