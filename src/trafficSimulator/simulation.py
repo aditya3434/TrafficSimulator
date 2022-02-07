@@ -65,6 +65,18 @@ class Simulation:
                     return True
         return False
 
+    def offroad(self, v, offset):
+        for road in self.roads:
+            x1, y1 = v.x, v.y
+            x2, y2 = road.start[0], road.start[1]
+            x3, y3 = road.end[0], road.end[1]
+            area = 0.5*(x1*(y2-y3)+x2*(y3-y1)+x3*(y1-y2))
+            area = abs(area)
+            dist = (2*area)/road.length
+            if dist < offset:
+                return False
+        return True
+
     def update(self):
         # Update every road
         for road in self.roads:
