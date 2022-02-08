@@ -17,7 +17,7 @@ def create_sim():
 
     sim.create_single_gen({
         'auto' : False,
-        'vehicle': [1, {"v": 6, "steer": 0.0, "x": 0, "y": 70, "model": "Normal"}]
+        'vehicle': [1, {"v": 6, "steer": 0.0, "x": 0, "y": 90, "model": "Normal"}]
     })
 
     return sim
@@ -93,4 +93,4 @@ for func in funcs:
     win.offset = (-150, -110)
 
     # Run the simulation in the window
-    win.run(func, steps_per_update=5)
+    win.run(func_PD, steps_per_update=5)

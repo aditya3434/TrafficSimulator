@@ -1,6 +1,3 @@
-import sys
-sys.path.append('../')
-
 from trafficSimulator import *
 import random
 import model as md
