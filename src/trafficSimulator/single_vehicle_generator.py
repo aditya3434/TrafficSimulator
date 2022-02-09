@@ -18,7 +18,7 @@ class SingleVehicleGenerator:
 
     def set_default_config(self):
         """Set default configuration"""
-        self.vehicle = (1, {})
+        self.vehicle = {}
 
     def init_properties(self):
         if self.auto:
@@ -28,10 +28,10 @@ class SingleVehicleGenerator:
         self.spawn = False
 
     def generate_auto_vehicle(self):
-        return Vehicle(self.vehicle[1])
+        return Vehicle(self.vehicle)
 
     def generate_action_vehicle(self):
-        return ActionVehicle(self.vehicle[1])
+        return ActionVehicle(self.vehicle)
 
     def update(self):
         """Add vehicles"""

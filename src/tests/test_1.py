@@ -23,11 +23,11 @@ def create_sim():
     # sim.create_gen({
     #     'vehicle_rate': 10,
     #     'vehicles': [
-    #         [1, {"path": [4, 3, 5, 9]}],
-    #         [1, {"path": [4, 3, 2]}],
-    #         [1, {"path": [1]}],
-    #         [1, {"path": [6]}],
-    #         [1, {"path": [7]}]
+    #         {"path": [4, 3, 5, 9]},
+    #         {"path": [4, 3, 2]},
+    #         {"path": [1]},
+    #         {"path": [6]},
+    #         {"path": [7]}
     #     ]
     # })
 
@@ -37,9 +37,14 @@ def create_sim():
     #     'vehicle': [1, {"acc": 10, "x": 0, "y": 98, "model": "Kinematic", "L": 2.5, "c_a": 2.0, "c_r": 0.01}]
     # })
 
-    ego_vehicle1 = sim.create_single_gen({
+    sim.create_single_gen({
         'auto' : False,
-        'vehicle': [1, {"acc": 0, "v": 5, "x": 0, "y": 102, "model": "Normal"}]
+        'vehicle': {"acc": 0, "v": 5, "x": 0, "y": 102, "model": "Normal"}
+    })
+
+    sim.create_single_gen({
+        'auto' : True,
+        'vehicle': {"path": [4, 3, 5, 9]}
     })
 
     return sim
@@ -64,4 +69,4 @@ win = Window(sim)
 win.offset = (-150, -110)
 
 # Run the simulation in the window
-win.run(func, steps_per_update=5)
+win.run(steps_per_update=5)

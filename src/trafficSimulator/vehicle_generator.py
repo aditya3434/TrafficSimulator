@@ -18,9 +18,7 @@ class VehicleGenerator:
     def set_default_config(self):
         """Set default configuration"""
         self.vehicle_rate = 20
-        self.vehicles = [
-            (1, {})
-        ]
+        self.vehicles = []
         self.last_added_time = 0
 
     def init_properties(self):
@@ -28,10 +26,10 @@ class VehicleGenerator:
 
     def generate_vehicle(self):
         """Returns a random vehicle from self.vehicles with random proportions"""
-        total = sum(pair[0] for pair in self.vehicles)
+        total = len(self.vehicles)
         r = randint(1, total+1)
-        for (weight, config) in self.vehicles:
-            r -= weight
+        for config in self.vehicles:
+            r -= 1
             if r <= 0:
                 return Vehicle(config)
 
