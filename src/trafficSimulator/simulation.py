@@ -50,7 +50,7 @@ class Simulation:
         return sig
 
     def ego_collide(self, v1, v2):
-        dist = math.sqrt((v1.x-v2.x)**2+(v1.y-v2.y)**2)
+        dist = self.distance(v1, v2.x, v2.y)
         if dist < 1:
             return True
         return False
@@ -60,7 +60,7 @@ class Simulation:
             for v in road.vehicles:
                 x = road.start[0]+(v.x*road.angle_cos)
                 y = road.start[1]+(v.x*road.angle_sin)
-                dist = math.sqrt((v1.x-x)**2+(v1.y-y)**2)
+                dist = self.distance(v1, x, y)
                 if dist < 1:
                     return True
         return False
@@ -73,9 +73,12 @@ class Simulation:
             area = 0.5*(x1*(y2-y3)+x2*(y3-y1)+x3*(y1-y2))
             area = abs(area)
             dist = (2*area)/road.length
-            if dist < offset:
+            if dist < offset and abs(x1-max(x2, x3)) < offset/2 and abs(x1-min(x2, x3)) < offset/2:
                 return False
         return True
+
+    def distance(self, v, x, y):
+        return math.sqrt((v.x-x)**2+(v.y-y)**2)
 
     def update(self):
         # Update every road
