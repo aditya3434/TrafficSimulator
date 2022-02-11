@@ -69,4 +69,4 @@ win = Window(sim)
 win.offset = (-150, -110)
 
 # Run the simulation in the window
-win.run(steps_per_update=5)
+win.run(func, steps_per_update=5)
