@@ -32,7 +32,7 @@ class ActionVehicle:
 
     # Get all attributes of the action vehicle
     def get_state(self):
-        return [self.v, (self.x, self.y), [self.acc, self.steer]]
+        return [self.v, (self.x, self.y), self.angle, [self.acc, self.steer]]
 
     # Set acceleration and steer of the vehicle
     def set_state(self, state):
