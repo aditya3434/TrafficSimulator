@@ -39,26 +39,31 @@ class ActionVehicle:
         self.acc = state[0]
         self.steer = state[1]
 
+    def normalize_angle(self, angle):
+        """
+        Normalize an angle to [-pi, pi].
+        :param angle: (float)
+        :return: (float) Angle in radian in [-pi, pi]
+        """
+        while angle > np.pi:
+            angle -= 2.0 * np.pi
+
+        while angle < -np.pi:
+            angle += 2.0 * np.pi
+
+        return angle
+
     # Update position and velocity
     def update(self, dt):
 
         if self.model == "Kinematic":
-            f_load = self.v * (self.c_r + self.c_a * self.v)
-            self.v += dt * (self.acc - f_load)
-
-            # Compute the radius and angular velocity of the kinematic bicycle model
             delta = np.clip(self.steer, -self.max_steer, self.max_steer)
-            yaw = np.radians(self.angle)
 
-            # Compute the state change rate
-            x_dot = self.v * np.cos(yaw)
-            y_dot = self.v * np.sin(yaw)
-            omega = self.v * np.tan(delta) / self.L
-
-            # Compute the final state using the discrete time model
-            self.x += x_dot * dt
-            self.y += y_dot * dt
-            self.angle += omega * dt
+            self.x += self.v * np.cos(self.yaw) * dt
+            self.y += self.v * np.sin(self.yaw) * dt
+            self.yaw += self.v / self.L * np.tan(delta) * dt
+            self.yaw = self.normalize_angle(self.yaw)
+            self.v += self.acc * dt
 
         else :
             # Changing angle according to steer
