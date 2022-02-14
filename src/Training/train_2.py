@@ -25,13 +25,11 @@ def create_sim():
 # Discrete choices for our vehicle
 def choose_action(choice):
     if choice == 0:
-        return [0, 0]
-    elif choice == 1:
-        return [0.2, 0]
-    elif choice == 2:
         return [0.2, 0.2]
-    else:
+    elif choice == 1:
         return [0.2, 0.4]
+    else:
+        return [0.2, 0]
 
 # Agent step function
 def step(sim, epi, loss, model, steps_per_update):
@@ -43,7 +41,7 @@ def step(sim, epi, loss, model, steps_per_update):
     # Ego vehicle which we are training
     ego = sim.action_vehicles[0]
 
-    dist = sim.distance(ego, 150, 110)
+    dist = sim.distance(ego, 150, 115)
     angle = ego.get_state()[2]
 
     # Current state
@@ -58,7 +56,7 @@ def step(sim, epi, loss, model, steps_per_update):
     # Agent takes choice and updates environment
     sim.run(steps_per_update)
 
-    dist = sim.distance(ego, 150, 110)
+    dist = sim.distance(ego, 150, 115)
     angle = ego.get_state()[2]
 
     next_state = [dist, angle]
@@ -90,7 +88,7 @@ def step(sim, epi, loss, model, steps_per_update):
 loss = []
 
 # DQN model for our autonomous vehicle
-turn_model = md.DQN(4,2,'turn_model')
+turn_model = md.DQN(3,2,'turn_model')
 x = []
 
 # No. of training episodes

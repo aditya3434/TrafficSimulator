@@ -20,32 +20,32 @@ def create_sim():
     ])
 
     # Creating a generator that keeps spawning auto-vehicles
-    # sim.create_gen({
-    #     'vehicle_rate': 10,
-    #     'vehicles': [
-    #         {"path": [4, 3, 5, 9]},
-    #         {"path": [4, 3, 2]},
-    #         {"path": [1]},
-    #         {"path": [6]},
-    #         {"path": [7]}
-    #     ]
-    # })
+    sim.create_gen({
+        'vehicle_rate': 10,
+        'vehicles': [
+            {"path": [4, 3, 5, 9]},
+            {"path": [4, 3, 2]},
+            {"path": [1]},
+            {"path": [6]},
+            {"path": [7]}
+        ]
+    })
 
     # Creating 2 ego vehicles
-    # ego_vehicle1 = sim.create_single_gen({
+    ego_vehicle1 = sim.create_single_gen({
+        'auto' : False,
+        'vehicle': {"acc": 0.5, "x": 0, "y": 98, "model": "Kinematic", "L": 2.9, "c_a": 2.0, "c_r": 0.01}
+    })
+
+    # sim.create_single_gen({
     #     'auto' : False,
-    #     'vehicle': [1, {"acc": 10, "x": 0, "y": 98, "model": "Kinematic", "L": 2.5, "c_a": 2.0, "c_r": 0.01}]
+    #     'vehicle': {"acc": 0, "v": 5, "x": 0, "y": 102, "model": "Normal"}
     # })
 
-    sim.create_single_gen({
-        'auto' : False,
-        'vehicle': {"acc": 0, "v": 5, "x": 0, "y": 102, "model": "Normal"}
-    })
-
-    sim.create_single_gen({
-        'auto' : True,
-        'vehicle': {"path": [4, 3, 5, 9]}
-    })
+    # sim.create_single_gen({
+    #     'auto' : True,
+    #     'vehicle': {"path": [4, 3, 5, 9]}
+    # })
 
     return sim
 
@@ -55,11 +55,14 @@ def func(sim):
 
     steer = random.uniform(-0.3, 0.3)
 
-    ego1.set_state([0, steer])
+    ego1.set_state([0.5, steer])
+
+    print(ego1.angle)
 
     # Check if the ego vehicles collide with each other or with any auto vehicles
-    if sim.offroad(ego1, 3.5):
-        return True
+    # if sim.offroad(ego1, 3.5):
+    #     print("oops!")
+    #     return True
     
 # Create simulation
 sim = create_sim()

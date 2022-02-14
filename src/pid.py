@@ -11,13 +11,13 @@ def create_sim():
 
     sim.create_single_gen({
         'auto' : True,
-        'vehicle': [1, {"path": [0]}]
+        'vehicle': {"path": [0]}
     })
 
 
     sim.create_single_gen({
         'auto' : False,
-        'vehicle': [1, {"v": 6, "steer": 0.0, "x": 0, "y": 90, "model": "Normal"}]
+        'vehicle': {"v": 6, "steer": 0.0, "x": 0, "y": 50, "angle": 180, "model": "Normal"}
     })
 
     return sim
@@ -49,11 +49,11 @@ def func_PD(sim):
 
     y = ego.get_state()[1][1]
 
-    print(x, y)
+    # print(x, y)
 
     dev = y-prev_y
 
-    steer = 0.01*(98-y)-dev
+    steer = 0.005*(98-y)-dev
 
     ego.set_state([0, steer])
 
