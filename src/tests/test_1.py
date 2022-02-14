@@ -32,15 +32,15 @@ def create_sim():
     })
 
     # Creating 2 ego vehicles
-    ego_vehicle1 = sim.create_single_gen({
-        'auto' : False,
-        'vehicle': {"acc": 0.5, "x": 0, "y": 98, "model": "Kinematic", "L": 2.9, "c_a": 2.0, "c_r": 0.01}
-    })
-
-    # sim.create_single_gen({
+    # ego_vehicle1 = sim.create_single_gen({
     #     'auto' : False,
-    #     'vehicle': {"acc": 0, "v": 5, "x": 0, "y": 102, "model": "Normal"}
+    #     'vehicle': {"acc": 0.5, "x": 0, "y": 98, "model": "Kinematic", "L": 2.9, "c_a": 2.0, "c_r": 0.01}
     # })
+
+    sim.create_single_gen({
+        'auto' : False,
+        'vehicle': {"acc": 0, "v": 5, "x": 0, "y": 102, "model": "Normal"}
+    })
 
     # sim.create_single_gen({
     #     'auto' : True,
@@ -57,11 +57,8 @@ def func(sim):
 
     ego1.set_state([0.5, steer])
 
-    print(ego1.angle)
-
     # Check if the ego vehicles collide with each other or with any auto vehicles
     # if sim.offroad(ego1, 3.5):
-    #     print("oops!")
     #     return True
     
 # Create simulation
