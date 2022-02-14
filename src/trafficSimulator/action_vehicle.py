@@ -7,7 +7,7 @@ class ActionVehicle:
 
         # Update configuration
         for attr, val in config.items():
-            setattr(self, attr, val)\
+            setattr(self, attr, val)
 
     def set_default_config(self):
 
@@ -22,10 +22,11 @@ class ActionVehicle:
         self.angle = 0;
 
         # Kinematic Model parameters
-        self.L = 1
-        self.max_steer = 1
+        self.L = 2.9
+        self.max_steer = np.radians(30.0)
         self.c_r = 0
         self.c_a = 0
+        self.yaw = 0
 
         self.color = (255,22,12)
 
@@ -64,6 +65,7 @@ class ActionVehicle:
             self.yaw += self.v / self.L * np.tan(delta) * dt
             self.yaw = self.normalize_angle(self.yaw)
             self.v += self.acc * dt
+            self.angle += self.yaw
 
         else :
             # Changing angle according to steer
