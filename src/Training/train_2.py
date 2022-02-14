@@ -4,6 +4,33 @@ import model as md
 import matplotlib.pyplot as plt
 import numpy as np
 
+class ModelWindow(Window):
+
+    def __init__(self, sim, config={}):
+        super().__init__(sim, config)
+
+    def run(self, step=None, epi = 0, loss = None, model = None, steps_per_update=1):
+        """Runs the simulation by updating in every loop."""
+        def loop(sim):
+            sim.run(steps_per_update)
+
+            if step:
+                done = False
+                reward = 0
+                new_model = None
+                if model:
+                    new_model, reward, done = step(sim, epi, loss, model, steps_per_update)
+                else:
+                    done = step(sim)
+                if done:
+                    self.running = False
+                return reward, new_model
+            else:
+                return 0, None
+
+        return self.loop(loop)
+
+
 def create_sim():
     
     sim = Simulation()
@@ -100,7 +127,7 @@ for i in range(episodes):
     sim = create_sim()
 
     # Create window to display simulation
-    win = Window(sim)
+    win = ModelWindow(sim)
     win.offset = (-150, -110)
 
     # Get total score an updated model after simulation ends

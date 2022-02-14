@@ -91,24 +91,16 @@ class Window:
 
         return score, model        
 
-    def run(self, step=None, epi = 0, loss = None, model = None, steps_per_update=1):
+    def run(self, step=None, steps_per_update=1):
         """Runs the simulation by updating in every loop."""
         def loop(sim):
             sim.run(steps_per_update)
 
             if step:
-                done = False
-                reward = 0
-                new_model = None
-                if model:
-                    new_model, reward, done = step(sim, epi, loss, model, steps_per_update)
-                else:
-                    done = step(sim)
+                done = step(sim)
                 if done:
                     self.running = False
-                return reward, new_model
-            else:
-                return 0, None
+            return 0, None
 
         return self.loop(loop)
 
