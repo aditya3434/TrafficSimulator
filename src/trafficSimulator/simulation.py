@@ -73,7 +73,7 @@ class Simulation:
             area = 0.5*(x1*(y2-y3)+x2*(y3-y1)+x3*(y1-y2))
             area = abs(area)
             dist = (2*area)/road.length
-            if dist < offset and x1 <= max(x2, x3) and x1 >= min(x2, x3):
+            if dist < offset and x1-max(x2, x3) < offset and min(x2, x3)-x1 < offset:
                 return False
         return True
 
