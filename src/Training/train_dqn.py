@@ -12,21 +12,39 @@ class ModelWindow(Window):
     def run(self, step=None, epi = 0, loss = None, model = None, steps_per_update=1):
         """Runs the simulation by updating in every loop."""
         def loop(sim):
+
+            if not step:
+                return 0, None
+
+            ego = sim.action_vehicles[0]
+
+            dist = sim.distance(ego, 150, 115)
+            angle = ego.get_state()[2]
+
+            state = [dist, angle]
+            state = np.reshape(state, (1,2))
+
+            choice = model.act(state)
+            action = choose_action(choice)
+            ego.set_state(action)
+
             sim.run(steps_per_update)
 
-            if step:
-                done = False
-                reward = 0
-                new_model = None
-                if model:
-                    new_model, reward, done = step(sim, epi, loss, model, steps_per_update)
-                else:
-                    done = step(sim)
-                if done:
-                    self.running = False
-                return reward, new_model
-            else:
-                return 0, None
+            reward, done = step(sim, steps_per_update)
+
+            dist = sim.distance(ego, 150, 115)
+            angle = ego.get_state()[2]
+
+            next_state = [dist, angle]
+            next_state = np.reshape(next_state, (1,2))
+
+            model.remember(state, choice, reward, next_state, done)
+            model.replay(done, epi, loss)
+
+            if done:
+                self.running = False
+
+            return reward, model
 
         return self.loop(loop)
 
@@ -44,7 +62,7 @@ def create_sim():
 
     sim.create_single_gen({
         'auto' : False,
-        'vehicle': {"v": 2, "x": 140, "y": 100}
+        'vehicle': {"v": 4, "x": 140, "y": 100}
     })
 
     return sim
@@ -59,42 +77,19 @@ def choose_action(choice):
         return [0.2, 0]
 
 # Agent step function
-def step(sim, epi, loss, model, steps_per_update):
+def step(sim, steps_per_update):
 
     # Initializing reward and done state
     reward = 0
     done = False
 
-    # Ego vehicle which we are training
     ego = sim.action_vehicles[0]
 
     dist = sim.distance(ego, 150, 115)
     angle = ego.get_state()[2]
 
-    # Current state
-    state = [dist, angle]
-    state = np.reshape(state, (1,2))
-
-    # Model gives choice
-    choice = model.act(state)
-    action = choose_action(choice)
-    ego.set_state(action)
-
-    # Agent takes choice and updates environment
-    sim.run(steps_per_update)
-
-    dist = sim.distance(ego, 150, 115)
-    angle = ego.get_state()[2]
-
-    next_state = [dist, angle]
-    next_state = np.reshape(next_state, (1,2))
-
     reward = 0.5*(50-dist)+0.1*(90-angle)
-
-    # Model learning
-    model.remember(state, choice, reward, next_state, done)
-    model.replay(done, epi, loss)
-
+    
     # If ego vehicle reaches the end of the road, sim ends
     if dist < 3:
         print("Target reached!")
@@ -125,6 +120,7 @@ episodes = 500
 for i in range(episodes):
     # Create simulation
     sim = create_sim()
+    sim.run(1)
 
     # Create window to display simulation
     win = ModelWindow(sim)
@@ -132,7 +128,7 @@ for i in range(episodes):
 
     # Get total score an updated model after simulation ends
     score, turn_model = win.run(step, i, loss, turn_model, steps_per_update=4)
-    print(turn_model.epsilon)
+    print("Epsilon : ",turn_model.epsilon)
     
     # Append total score to list
     loss.append(score)
