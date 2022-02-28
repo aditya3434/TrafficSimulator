@@ -1,6 +1,3 @@
-import sys
-sys.path.append('../')
-
 from trafficSimulator import *
 
 # Create simulation
@@ -15,9 +12,9 @@ sim.create_roads([
 ])
 
 sim.create_gen({
-    'vehicle_rate': 20,
+    'vehicle_rate': 5,
     'vehicles': [
-        [1, {"path": [0, *range(2, 17), 1]}]
+        {"path": [0, *range(2, 17), 1]}
     ]
 })
 

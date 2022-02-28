@@ -1,0 +1,39 @@
+roads:
+  - start: [300, 98]
+    end: [0, 98]
+  - start: [0, 102]
+    end: [300, 102]
+  - start: [180, 60]
+    end: [0, 60]
+  - start: [220, 55]
+    end: [180, 60]
+  - start: [300, 30]
+    end: [220, 55]
+  - start: [180, 60]
+    end: [160, 98]
+  - start: [0, 178]
+    end: [300, 178]
+  - start: [300, 182]
+    end: [0, 182]
+  - start: [160, 102]
+    end: [155, 180]
+  - start: [160, 98]
+    end: [0, 98]
+
+generator:
+  vehicle_rate: 10
+  vehicles:
+    - path: [4, 3, 5, 9]
+    - path: [4, 3, 2]
+    - path: [1]
+    - path: [6]
+    - path: [7]
+
+single_vehicles:
+  - auto: False
+    vehicle:
+      acc: 0
+      v: 5
+      x: 0
+      y: 102
+      model: Normal
