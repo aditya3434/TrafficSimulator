@@ -19,6 +19,7 @@ class SingleVehicleGenerator:
     def set_default_config(self):
         """Set default configuration"""
         self.vehicle = {}
+        self.spawn_time = 0
 
     def init_properties(self):
         if self.auto:
@@ -35,7 +36,7 @@ class SingleVehicleGenerator:
 
     def update(self):
         """Add vehicles"""
-        if not self.spawn:
+        if not self.spawn and self.sim.t >= self.spawn_time:
             if self.auto:
                 road = self.sim.roads[self.vehicle_state.path[0]]      
                 if len(road.vehicles) == 0\
