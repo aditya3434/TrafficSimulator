@@ -2,6 +2,8 @@ import pygame
 from pygame import gfxdraw
 import numpy as np
 import random
+from scipy.spatial import distance
+import math
 
 class Window:
     def __init__(self, sim, config={}):
@@ -152,7 +154,15 @@ class Window:
         gfxdraw.aacircle(self.screen, *pos, radius, color)
         if filled:
             gfxdraw.filled_circle(self.screen, *pos, radius, color)
+            
+    def draw_arc(self, center, start_angle, end_angle, radius_in, color_out):
 
+        center = self.convert(*center)
+        rect = pygame.Rect(center[0]-self.zoom*radius_in,center[1]-self.zoom*radius_in,2*radius_in*self.zoom, 2*radius_in*self.zoom)
+        pygame.draw.arc(self.screen,color_out,rect,-end_angle,-start_angle, 6*self.zoom)
+        # gfxdraw.pie(self.screen,*self.convert(*center), radius_in,start_angle,end_angle, color_in)
+        # gfxdraw.arc(self.screen,*self.convert(*center), 11,0,3, color_out)
+        #i  = 0
 
 
     def polygon(self, vertices, color, filled=True):
@@ -164,9 +174,15 @@ class Window:
         """Draws a rectangle center at *pos* with size *size* rotated anti-clockwise by *angle*."""
         x, y = pos
         l, h = size
+        #print(pos)
+        #print(size)
 
         if angle:
             cos, sin = np.cos(angle), np.sin(angle)
+        #print(x)
+        #print(y)
+        #print(cos)
+        #print(sin)
         
         vertex = lambda e1, e2: (
             x + (e1*l*cos + e2*h*sin)/2,
@@ -182,6 +198,7 @@ class Window:
                 [vertex(*e) for e in [(0,-1), (0, 1), (2,1), (2,-1)]]
             )
 
+        #print(vertices)
         self.polygon(vertices, color, filled=filled)
         #pygame.draw.rect(self.screen, color, (x, y, l, h))
 
@@ -250,50 +267,79 @@ class Window:
     def draw_roads(self):
         for road in self.sim.roads:
             # Draw road background
-            self.rotated_box(
-                road.start,
-                (road.length, 6),
-                cos=road.angle_cos,
-                sin=road.angle_sin,
-                color=(128, 128, 128),
-                centered=False
-            )
-            # Draw road lines
-            # self.rotated_box(
-            #     road.start,
-            #     (road.length, 0.25),
-            #     cos=road.angle_cos,
-            #     sin=road.angle_sin,
-            #     color=(0, 0, 0),
-            #     centered=False
-            # )
+            #print(road.start)
+            if road.type <=2 :
+                self.rotated_box(
+                    road.start,
+                    (road.length, 6*road.type),
+                    cos=road.angle_cos,
+                    sin=road.angle_sin,
+                    color=(128, 128, 128),
+                    centered=False
+                )
+                # Draw road lines
+                # self.rotated_box(
+                #     road.start,
+                #     (road.length, 0.25),
+                #     cos=road.angle_cos,
+                #     sin=road.angle_sin,
+                #     color=(0, 0, 0),
+                #     centered=False
+                # )
 
-            # Draw road arrow
-            if road.length > 5: 
-                for i in np.arange(-0.5*road.length, 0.5*road.length, 10):
-                    pos = (
-                        road.start[0] + (road.length/2 + i + 3) * road.angle_cos,
-                        road.start[1] + (road.length/2 + i + 3) * road.angle_sin
-                    )
+                # Draw road arrow
+                if road.length > 5: 
+                    for i in np.arange(-0.5*road.length, 0.5*road.length, 10):
+                        pos = (
+                            road.start[0] + (road.length/2 + i + 3) * road.angle_cos,
+                            road.start[1] + (road.length/2 + i + 3) * road.angle_sin
+                        )
 
-                    self.rotated_box(
-                        pos,
-                        (-1.25, 0.2),
-                        cos=road.angle_cos,
-                        sin=road.angle_sin,
-                        color=(255, 255, 255)
-                    )   
+                        self.rotated_box(
+                            pos,
+                            (-1.25, 0.2),
+                            cos=road.angle_cos,
+                            sin=road.angle_sin,
+                            color=(255, 255, 255)
+                        )   
+                        
+            else:
+                start_angle = np.arctan2(road.start[1] - road.center[1],road.start[0] - road.center[0])
+                end_angle = np.arctan2(road.end[1] - road.center[1],road.end[0] - road.center[0])
+                self.draw_arc(road.center,
+                              (start_angle),
+                              (end_angle),
+                              (distance.euclidean(road.center,road.start)+3*(road.type-2)),
+                              (128, 128, 128)
+                        )
             
 
 
             # TODO: Draw road arrow
 
     def draw_vehicle(self, vehicle, road):
+        
         l, h = vehicle.l,  2
-        sin, cos = road.angle_sin, road.angle_cos
-
-        x = road.start[0] + cos * vehicle.x 
-        y = road.start[1] + sin * vehicle.x 
+        if road.type<=2:
+            sin, cos = road.angle_sin, road.angle_cos
+            x = road.start[0] + cos * vehicle.x 
+            y = road.start[1] + sin * vehicle.x 
+            
+        else:
+            theta = vehicle.x/road.radius
+            #print(theta)
+            start_angle = -np.arctan2(road.start[1] - road.center[1],road.start[0] - road.center[0])
+            end_angle = -np.arctan2(road.end[1] - road.center[1],road.end[0] - road.center[0])
+            #if(start_angle)
+            if(start_angle > end_angle):
+                final_angle = start_angle-theta
+            else:
+                final_angle = start_angle+theta
+            
+            sin, cos = math.sin(math.pi/2-final_angle), math.cos(math.pi/2-final_angle)
+            x = road.center[0] + sin* road.radius
+            y = road.center[1] - cos * road.radius
+            
 
         self.rotated_box((x, y), (l, h), cos=cos, sin=sin, centered=True)
 
